@@ -1,0 +1,27 @@
+---
+import { Image } from 'astro:assets';
+import { remoteThumb, thumbAlt, type Video } from '../lib/videos';
+
+interface Props {
+  video: Video;
+  widths: number[];
+  sizes: string;
+  eager?: boolean;
+}
+const { video: v, widths, sizes, eager = false } = Astro.props;
+const remote = remoteThumb(v);
+const alt = thumbAlt(v);
+---
+{v.data.thumbnail ? (
+  <Image
+    src={v.data.thumbnail}
+    alt={alt}
+    widths={widths}
+    sizes={sizes}
+    format="webp"
+    loading={eager ? 'eager' : 'lazy'}
+    fetchpriority={eager ? 'high' : undefined}
+  />
+) : (
+  <img src={remote} alt={alt} width="480" height="360" loading={eager ? 'eager' : 'lazy'} decoding="async" />
+)}

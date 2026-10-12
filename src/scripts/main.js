@@ -1,4 +1,4 @@
-/* Hughes Media Portfolio front end. No dependencies. */
+/* Hughes Media video site front end. No dependencies. */
 ( function () {
 	'use strict';
 
@@ -6,9 +6,9 @@
 	var t = {
 		openMenu: 'Open menu',
 		closeMenu: 'Close menu',
-		showing: 'Showing %d projects',
-		showingOne: 'Showing 1 project',
-		seenAll: "You've seen all %d projects.",
+		showing: 'Showing %d videos',
+		showingOne: 'Showing 1 video',
+		seenAll: "You've seen all %d videos.",
 		selected: '%s filter, selected',
 		sending: 'Sending…',
 		serverError: "Something went wrong and your request wasn't sent. Please try again or call " + PHONE + '.',
@@ -102,7 +102,7 @@
 				var firstNew = limit;
 				limit += PAGE;
 				render( false );
-				// Move focus to the first newly shown project.
+				// Move focus to the first newly shown video.
 				var shown = cards.filter( function ( c ) { return ! c.hidden; } );
 				var link = shown[ firstNew ] && shown[ firstNew ].querySelector( '.hm-card__link' );
 				if ( link ) { link.focus(); }
@@ -157,45 +157,24 @@
 		render( false );
 	} )();
 
-	/* ---------- Gallery lightbox ---------- */
-	( function () {
-		var gallery = document.querySelector( '[data-gallery]' );
-		var dialog = document.querySelector( '[data-lightbox]' );
-		if ( ! gallery || ! dialog || typeof dialog.showModal !== 'function' ) { return; }
-
-		var items = Array.prototype.slice.call( gallery.querySelectorAll( '.hm-gallery__item' ) );
-		var img = dialog.querySelector( '[data-lightbox-img]' );
-		var index = 0;
-		var opener = null;
-
-		var show = function ( i ) {
-			index = ( i + items.length ) % items.length;
-			var thumb = items[ index ].querySelector( 'img' );
-			img.src = items[ index ].href;
-			img.alt = thumb ? thumb.alt : '';
-		};
-
-		items.forEach( function ( a, i ) {
-			a.addEventListener( 'click', function ( e ) {
-				e.preventDefault();
-				opener = a;
-				show( i );
-				dialog.showModal();
-			} );
+	/* ---------- Click-to-play video ---------- */
+	document.querySelectorAll( '[data-player]' ).forEach( function ( player ) {
+		var src = player.getAttribute( 'data-src' );
+		var link = player.querySelector( '.hm-player__play' );
+		if ( ! src || ! link ) { return; }
+		link.addEventListener( 'click', function ( e ) {
+			e.preventDefault();
+			var iframe = document.createElement( 'iframe' );
+			iframe.src = src;
+			iframe.title = player.getAttribute( 'data-title' ) || 'Video';
+			iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen';
+			iframe.allowFullscreen = true;
+			player.classList.add( 'is-playing' );
+			player.appendChild( iframe );
+			iframe.focus();
+			track( 'hm_video_play', { video_title: iframe.title, video_url: link.href } );
 		} );
-		var single = items.length < 2;
-		dialog.querySelector( '[data-prev]' ).hidden = single;
-		dialog.querySelector( '[data-next]' ).hidden = single;
-		dialog.querySelector( '[data-prev]' ).addEventListener( 'click', function () { show( index - 1 ); } );
-		dialog.querySelector( '[data-next]' ).addEventListener( 'click', function () { show( index + 1 ); } );
-		dialog.querySelector( '[data-close]' ).addEventListener( 'click', function () { dialog.close(); } );
-		dialog.addEventListener( 'click', function ( e ) { if ( e.target === dialog ) { dialog.close(); } } );
-		dialog.addEventListener( 'keydown', function ( e ) {
-			if ( e.key === 'ArrowLeft' ) { show( index - 1 ); }
-			if ( e.key === 'ArrowRight' ) { show( index + 1 ); }
-		} );
-		dialog.addEventListener( 'close', function () { if ( opener ) { opener.focus(); } } );
-	} )();
+	} );
 
 	/* ---------- Discovery call form ---------- */
 	( function () {

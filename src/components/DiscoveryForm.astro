@@ -23,13 +23,13 @@ const fields: { key: string; label: string; type: 'text' | 'email' | 'tel' | 'ur
 <div class="hm-form-success" data-form-success hidden tabindex="-1">
   <h2>Thanks, we got it.</h2>
   <p>Someone from our team will reach out within one business day to set up a time. Want to talk sooner? Call {business.phone}.</p>
-  <p><a class="hm-link-arrow" href="/work/">Browse more of our work →</a></p>
+  <p><a class="hm-link-arrow" href="/videos/">Watch more of our work →</a></p>
 </div>
 
 <form class="hm-form" method="post" action={endpoint || '#'} novalidate data-lead-form data-endpoint={endpoint}>
   <input type="hidden" name="source" value={Astro.url.pathname} />
   <input type="hidden" name="_next" value={thanksUrl} />
-  <input type="hidden" name="_subject" value="Discovery call request (portfolio site)" />
+  <input type="hidden" name="_subject" value="Discovery call request (video site)" />
   <div class="hm-hp" aria-hidden="true">
     <label for="hm-hp">Leave this field empty</label>
     <input type="text" id="hm-hp" name="_gotcha" tabindex="-1" autocomplete="off" />
@@ -59,7 +59,7 @@ const fields: { key: string; label: string; type: 'text' | 'email' | 'tel' | 'ur
     ))}
 
     <div class="hm-field">
-      <label for="hm-budget">Monthly marketing budget <span class="hm-field__opt">(optional)</span></label>
+      <label for="hm-budget">Video budget <span class="hm-field__opt">(optional)</span></label>
       <select id="hm-budget" name="budget">
         <option value="">Select a range</option>
         {budgetRanges.map((b) => <option value={b}>{b}</option>)}
@@ -68,7 +68,7 @@ const fields: { key: string; label: string; type: 'text' | 'email' | 'tel' | 'ur
   </div>
 
   <fieldset class="hm-field hm-checks">
-    <legend>What do you need help with? <span class="hm-field__opt">(optional)</span></legend>
+    <legend>What kind of video? <span class="hm-field__opt">(optional)</span></legend>
     {formServices.map((s, i) => (
       <label class="hm-check" for={`hm-svc-${i}`}>
         <input type="checkbox" id={`hm-svc-${i}`} name="services" value={s} />
@@ -79,7 +79,7 @@ const fields: { key: string; label: string; type: 'text' | 'email' | 'tel' | 'ur
 
   <div class="hm-field">
     <label for="hm-message">Anything else we should know? <span class="hm-field__opt">(optional)</span></label>
-    <textarea id="hm-message" name="message" rows="5" placeholder="Goals, timing, current challenges"></textarea>
+    <textarea id="hm-message" name="message" rows="5" placeholder="Goals, timing, where the video will run"></textarea>
   </div>
 
   <button type="submit" class="hm-btn hm-btn--primary hm-btn--lg" data-submit data-label="Request My Discovery Call">Request My Discovery Call</button>

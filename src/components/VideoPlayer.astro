@@ -1,0 +1,24 @@
+---
+import VideoThumb from './VideoThumb.astro';
+import { clientName, embedUrl, type Video } from '../lib/videos';
+
+/*
+ * Click-to-play player: shows the thumbnail and loads the YouTube/Vimeo iframe only
+ * when clicked, which keeps pages fast. Without JavaScript the button is a link to the video.
+ */
+interface Props {
+  video: Video;
+  eager?: boolean;
+}
+const { video: v, eager = false } = Astro.props;
+const src = embedUrl(v.data.videoUrl);
+const title = `${v.data.title}: ${clientName(v)}`;
+---
+<div class:list={['hm-player', v.data.vertical && 'hm-player--vertical']} data-player data-src={src} data-title={title}>
+  <VideoThumb video={v} widths={[640, 1200, 1920]} sizes="(min-width: 1264px) 1200px, 100vw" eager={eager} />
+  <a class="hm-player__play" href={v.data.videoUrl} target="_blank" rel="noopener" data-track="hm_video_play">
+    <span class="hm-play-icon" aria-hidden="true"></span>
+    <span class="screen-reader-text">Play video: {title}</span>
+  </a>
+  <span class="hm-player__duration" aria-label={`Duration ${v.data.duration}`}>{v.data.duration}</span>
+</div>

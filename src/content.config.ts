@@ -1,80 +1,84 @@
 import { defineCollection } from 'astro:content';
 import { glob } from 'astro/loaders';
 import { z } from 'astro/zod';
-import { industrySlugs, serviceSlugs } from './data/site';
+import { industrySlugs, videoTypeSlugs } from './data/site';
 
 /**
- * Projects ("Work"). One folder per project: src/content/projects/<slug>/index.md
- * with its images alongside. Copy src/content/projects/_template/ to start a new one.
+ * Videos. One folder per video: src/content/videos/<slug>/index.md with its
+ * thumbnail alongside. Copy src/content/videos/_template/ to start a new one.
+ * The Markdown body (optional) is the "About this video" story.
  *
  * Publishing rules are enforced at build time (the build fails with a clear message):
  *  - every required field is filled in;
  *  - a named client needs `approvalOnFile: true`;
- *  - an anonymized client needs `anonLabel`.
+ *  - an anonymized client needs `anonLabel`;
+ *  - Vimeo and other non-YouTube videos need a `thumbnail`.
  * Drafts (`draft: true`) skip the client rules and are left out of production builds.
  */
-const projects = defineCollection({
-  loader: glob({ pattern: '[!_]*/index.md', base: './src/content/projects' }),
+const videos = defineCollection({
+  loader: glob({ pattern: '[!_]*/index.md', base: './src/content/videos' }),
   schema: ({ image }) =>
     z
       .object({
-        /** Always filled in; shown publicly only when showClient + approvalOnFile. */
+        /** Video title as shown on the site, e.g. "Spring Open House Commercial". */
+        title: z.string().min(1),
+        /** Always filled in; shown publicly only when showClient is true. */
         client: z.string().min(1),
         showClient: z.boolean().default(false),
-        /** Written client approval to name them, show their logo, or publish their numbers. */
+        /** Written client approval to name them and publish the video and any numbers. */
         approvalOnFile: z.boolean().default(false),
         /** e.g. "Boston-area home comfort company". Required when showClient is false. */
         anonLabel: z.string().optional(),
-        /** Plain-words outcome, used as "[Client]: [Outcome]". */
-        outcome: z.string().min(1),
-        /** 1–2 sentences: cards, hero, meta description. */
+        /** 1–2 sentences: cards, page intro, meta description, VideoObject description. */
         summary: z.string().min(1).max(320),
-        heroImage: image(),
-        heroAlt: z.string().optional(),
-        services: z.array(z.enum(serviceSlugs)).min(1),
+        /** YouTube or Vimeo URL. */
+        videoUrl: z.url(),
+        /** Optional for YouTube (its thumbnail is used); required otherwise. */
+        thumbnail: image().optional(),
+        thumbnailAlt: z.string().optional(),
+        /** Running time, e.g. "1:30" or "0:15". */
+        duration: z.string().regex(/^(\d+:)?\d{1,2}:\d{2}$/, 'Use m:ss or h:mm:ss, e.g. "1:30"'),
+        /** 9:16 short-form video. */
+        vertical: z.boolean().default(false),
+        type: z.enum(videoTypeSlugs),
         industry: z.enum(industrySlugs),
-        /** Markdown. */
-        challenge: z.string().min(1),
-        approach: z.string().min(1),
-        results: z.string().min(1),
-        /** Up to 4. The first appears on the project card. */
-        stats: z
-          .array(z.object({ number: z.string().min(1), label: z.string().min(1) }))
-          .min(1, 'Every project needs at least one measurable result.')
-          .max(4),
+        /** What Hughes Media did, e.g. [Concept, Scripting, Production, Editing, Motion graphics]. */
+        deliverables: z.array(z.string().min(1)).default([]),
+        /** Optional results, up to 4. */
+        stats: z.array(z.object({ number: z.string().min(1), label: z.string().min(1) })).max(4).default([]),
         statsFootnote: z.string().optional(),
-        gallery: z.array(z.object({ src: image(), alt: z.string().min(1) })).default([]),
-        /** From the HM video site. YouTube/Vimeo embed; anything else shows a link. */
-        videoUrl: z.url().optional(),
         testimonial: z.object({ quote: z.string().min(1), name: z.string().optional() }).optional(),
-        /** Only shown when the client is named. */
-        liveUrl: z.url().optional(),
-        period: z.string().optional(),
+        /** Full case study on the portfolio site, if there is one. */
+        caseStudyUrl: z.url().optional(),
+        /** Use as the homepage hero reel (the first one by order wins). */
+        reel: z.boolean().default(false),
         featured: z.boolean().default(false),
-        /** Sort order on the Work page and homepage (lower first), then newest. */
+        /** Sort order on /videos/ and the homepage (lower first), then newest. */
         order: z.number().default(100),
+        /** Publish / release date; used for ordering and VideoObject uploadDate. */
         date: z.coerce.date(),
-        /** If this duplicates a hughesmedia.us case study, the canonical tag points there. */
-        canonicalUrl: z.url().optional(),
         draft: z.boolean().default(false),
       })
-      .superRefine((p, ctx) => {
-        if (p.draft) return;
-        if (p.showClient && !p.approvalOnFile) {
+      .superRefine((v, ctx) => {
+        if (!v.thumbnail && !/youtu\.?be/.test(v.videoUrl)) {
+          ctx.addIssue({ code: 'custom', path: ['thumbnail'], message: 'Non-YouTube videos need a thumbnail image.' });
+        }
+        if (v.draft) return;
+        if (v.showClient && !v.approvalOnFile) {
           ctx.addIssue({
             code: 'custom',
             path: ['approvalOnFile'],
             message: 'Client is named (showClient: true) but written approval is not on file. Set approvalOnFile: true once approved, or anonymize.',
           });
         }
-        if (!p.showClient && !p.anonLabel) {
+        if (!v.showClient && !v.anonLabel) {
           ctx.addIssue({
             code: 'custom',
             path: ['anonLabel'],
-            message: 'Anonymized project needs anonLabel (e.g. "Boston-area home comfort company").',
+            message: 'Anonymized video needs anonLabel (e.g. "Boston-area home comfort company").',
           });
         }
       }),
 });
 
-export const collections = { projects };
+export const collections = { videos };

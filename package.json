@@ -1,5 +1,5 @@
 {
-  "name": "hughes-media-portfolio",
+  "name": "hughes-media-video",
   "type": "module",
   "version": "1.0.0",
   "private": true,
@@ -16,7 +16,6 @@
     "@fontsource/oswald": "^5.3.0",
     "@fontsource/roboto": "^5.3.0",
     "astro": "^7.3.8",
-    "marked": "^18.1.1",
     "typescript": "^6.0.3"
   }
 }

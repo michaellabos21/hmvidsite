@@ -19,10 +19,12 @@ export const addressLine = `${business.street}, ${business.city}, ${business.reg
 
 export const links = {
   mainSite: 'https://hughesmedia.us/',
+  /** hughesmedia.us video production service page. */
+  mainSiteVideo: 'https://hughesmedia.us/',
+  /** Hughes Media portfolio site (case studies). Empty hides the links. */
+  portfolio: '',
   team: 'https://hughesmedia.us/',
   reviews: 'https://hughesmedia.us/reviews/',
-  /** HM video site. Empty hides the "video site" links. */
-  videoSite: '',
   /** Booking link (e.g. Calendly). Empty sends "Schedule Discovery Call" buttons to /contact/. */
   discovery: '',
   social: {
@@ -36,18 +38,46 @@ export const links = {
 export const discoveryUrl = links.discovery || '/contact/';
 
 /**
- * Service taxonomy. `mainSiteUrl` is the matching hughesmedia.us service page;
- * empty falls back to the main site home page. Fill these in before launch.
+ * Video types: the Type filter on /videos/ and the blocks on the Services page.
+ * `mainSiteUrl` is the matching hughesmedia.us page; empty falls back to `links.mainSiteVideo`.
  */
-export const services = [
-  { slug: 'seo', name: 'SEO', mainSiteUrl: '' },
-  { slug: 'ppc', name: 'PPC / Google Ads', mainSiteUrl: '' },
-  { slug: 'paid-social', name: 'Paid Social', mainSiteUrl: '' },
-  { slug: 'web-design-development', name: 'Web Design & Development', mainSiteUrl: '' },
-  { slug: 'video', name: 'Video', mainSiteUrl: '' },
-  { slug: 'branding', name: 'Branding', mainSiteUrl: '' },
-  { slug: 'email', name: 'Email', mainSiteUrl: '' },
-  { slug: 'programmatic', name: 'Programmatic', mainSiteUrl: '' },
+export const videoTypes = [
+  {
+    slug: 'brand-film',
+    name: 'Brand Films',
+    desc: 'The story of who you are and why it matters, for your homepage, sales team, and recruiting.',
+    mainSiteUrl: '',
+  },
+  {
+    slug: 'commercial',
+    name: 'Commercials & Ads',
+    desc: 'TV, streaming, YouTube, and paid social spots built for the platform they run on.',
+    mainSiteUrl: '',
+  },
+  {
+    slug: 'testimonial',
+    name: 'Testimonials & Case Studies',
+    desc: 'Real customers explaining the results, in their own words.',
+    mainSiteUrl: '',
+  },
+  {
+    slug: 'short-form',
+    name: 'Social & Short-Form',
+    desc: 'Vertical and short edits for Reels, TikTok, Shorts, and ads, shot to be cut many ways.',
+    mainSiteUrl: '',
+  },
+  {
+    slug: 'event',
+    name: 'Event Coverage',
+    desc: 'Conferences, galas, and openings captured as highlight reels and social clips.',
+    mainSiteUrl: '',
+  },
+  {
+    slug: 'explainer',
+    name: 'Explainers & Animation',
+    desc: 'Motion graphics and animation that make a product or process easy to understand.',
+    mainSiteUrl: '',
+  },
 ] as const;
 
 export const industries = [
@@ -61,25 +91,25 @@ export const industries = [
   { slug: 'other', name: 'Other' },
 ] as const;
 
-export type ServiceSlug = (typeof services)[number]['slug'];
+export type VideoTypeSlug = (typeof videoTypes)[number]['slug'];
 export type IndustrySlug = (typeof industries)[number]['slug'];
 
-export const serviceSlugs = services.map((s) => s.slug) as [ServiceSlug, ...ServiceSlug[]];
+export const videoTypeSlugs = videoTypes.map((t) => t.slug) as [VideoTypeSlug, ...VideoTypeSlug[]];
 export const industrySlugs = industries.map((i) => i.slug) as [IndustrySlug, ...IndustrySlug[]];
 
-export const serviceBySlug = (slug: string) => services.find((s) => s.slug === slug);
+export const videoTypeBySlug = (slug: string) => videoTypes.find((t) => t.slug === slug);
 export const industryBySlug = (slug: string) => industries.find((i) => i.slug === slug);
-export const serviceMainUrl = (slug: string) => serviceBySlug(slug)?.mainSiteUrl || links.mainSite;
+export const videoTypeMainUrl = (slug: string) => videoTypeBySlug(slug)?.mainSiteUrl || links.mainSiteVideo;
 
-/** Homepage. Alternate headlines for team review: "Real clients. Real results. No guesswork." · "Proof, not promises." · "The work behind the leads." */
+/** Homepage. Alternate headlines for team review: "Watch the work." · "Video built around results." */
 export const home = {
-  headline: 'Work that moves the numbers.',
-  /** Verified figures only. */
+  headline: 'Video that does a job.',
+  /** Verified figures only. Replace the bracketed placeholder before launch. */
   stats: [
-    { number: '2000', label: 'Year founded' },
+    { number: '2000', label: 'Making marketing work since' },
     { number: '8 yrs', label: 'Average client relationship' },
-    { number: '+64%', label: 'Enrollment leads for a private school, same ad spend' },
-    { number: '+27%', label: 'Google Ads leads for a home comfort company' },
+    { number: '[00+]', label: '[Videos produced — verify]' },
+    { number: 'ATL', label: 'In-house team in Atlanta' },
   ],
   /**
    * Client logos: only with written client approval. Files go in public/images/logos/.
@@ -95,10 +125,10 @@ export const badges = [] as { src: string; alt: string }[];
 export const kangarooMark = '';
 
 /** Budget ranges on the discovery call form. */
-export const budgetRanges = ['Under $2,500', '$2,500–$5,000', '$5,000–$10,000', '$10,000–$25,000', '$25,000+'];
+export const budgetRanges = ['Under $5,000', '$5,000–$10,000', '$10,000–$25,000', '$25,000–$50,000', '$50,000+'];
 
-/** "What do you need help with?" options on the form. */
-export const formServices = ['SEO', 'PPC', 'Website', 'Social', 'Video', 'Not sure yet'];
+/** "What kind of video?" options on the form. */
+export const formServices = ['Brand film', 'Commercial / ad', 'Testimonials', 'Social / short-form', 'Event', 'Animation', 'Not sure yet'];
 
 /** Show the cookie banner (enables Google Consent Mode defaults). */
 export const cookieBanner = false;

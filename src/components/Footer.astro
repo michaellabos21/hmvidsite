@@ -1,11 +1,11 @@
 ---
 import DiscoveryButton from './DiscoveryButton.astro';
 import PhoneLink from './PhoneLink.astro';
-import { badges, business, industries, kangarooMark, links, services } from '../data/site';
-import { getProjects } from '../lib/projects';
+import { badges, business, industries, kangarooMark, links, videoTypes } from '../data/site';
+import { getVideos } from '../lib/videos';
 
-const projects = await getProjects();
-const usedIndustries = industries.filter((i) => projects.some((p) => p.data.industry === i.slug)).slice(0, 5);
+const videos = await getVideos();
+const usedIndustries = industries.filter((i) => videos.some((v) => v.data.industry === i.slug)).slice(0, 5);
 const year = new Date().getFullYear();
 ---
 <footer class="hm-footer">
@@ -15,22 +15,23 @@ const year = new Date().getFullYear();
         <a class="hm-logo hm-logo--footer" href="/">
           <img class="hm-logo__img" src="/images/logo-white.webp" width="640" height="117" alt="Hughes Media digital agency" loading="lazy" />
         </a>
-        <p class="hm-footer__tagline">Connected marketing. Better leads. Clearer results.</p>
+        <p class="hm-footer__tagline">Video production from the Hughes Media team in Atlanta.</p>
         {kangarooMark && <div class="hm-footer__mark"><img src={kangarooMark} alt="" loading="lazy" /></div>}
       </div>
 
-      <nav class="hm-footer__col" aria-labelledby="hm-f-work">
-        <h2 class="hm-footer__heading" id="hm-f-work">Work</h2>
+      <nav class="hm-footer__col" aria-labelledby="hm-f-videos">
+        <h2 class="hm-footer__heading" id="hm-f-videos">Videos</h2>
         <ul role="list">
-          <li><a href="/work/">All projects</a></li>
-          {usedIndustries.map((i) => <li><a href={`/work/?industry=${i.slug}`}>{i.name}</a></li>)}
+          <li><a href="/videos/">All videos</a></li>
+          {videoTypes.map((t) => <li><a href={`/videos/?type=${t.slug}`}>{t.name}</a></li>)}
         </ul>
       </nav>
 
-      <nav class="hm-footer__col" aria-labelledby="hm-f-services">
-        <h2 class="hm-footer__heading" id="hm-f-services">Services</h2>
+      <nav class="hm-footer__col" aria-labelledby="hm-f-industries">
+        <h2 class="hm-footer__heading" id="hm-f-industries">Industries</h2>
         <ul role="list">
-          {services.slice(0, 6).map((s) => <li><a href={`/work/?service=${s.slug}`}>{s.name}</a></li>)}
+          {usedIndustries.map((i) => <li><a href={`/videos/?industry=${i.slug}`}>{i.name}</a></li>)}
+          {usedIndustries.length === 0 && <li><a href="/videos/">All industries</a></li>}
         </ul>
       </nav>
 
@@ -39,7 +40,7 @@ const year = new Date().getFullYear();
         <ul role="list">
           <li><a href="/about/">About</a></li>
           <li><a href="/services/">Services</a></li>
-          {links.videoSite && <li><a href={links.videoSite}>Video site</a></li>}
+          {links.portfolio && <li><a href={links.portfolio}>Portfolio & case studies</a></li>}
           <li><a href={links.mainSite}>Visit hughesmedia.us →</a></li>
         </ul>
       </nav>

@@ -1,0 +1,31 @@
+---
+import VideoThumb from './VideoThumb.astro';
+import { clientName, industryName, typeName, videoUrl, type Video } from '../lib/videos';
+
+interface Props {
+  video: Video;
+  headingLevel?: 2 | 3;
+}
+const { video: v, headingLevel = 3 } = Astro.props;
+const Heading = `h${headingLevel}` as 'h2' | 'h3';
+const stat = v.data.stats[0];
+---
+<article class="hm-card hm-card--video" data-type={v.data.type} data-industry={v.data.industry}>
+  <div class="hm-card__media">
+    <VideoThumb video={v} widths={[360, 720]} sizes="(min-width: 1100px) 360px, (min-width: 700px) 50vw, 100vw" />
+    <span class="hm-play-icon hm-play-icon--sm" aria-hidden="true"></span>
+    <span class="hm-card__duration"><span class="screen-reader-text">Duration </span>{v.data.duration}</span>
+    {v.data.draft && <span class="hm-draft-badge">Draft</span>}
+  </div>
+  <div class="hm-card__body">
+    <p class="hm-card__eyebrow">{typeName(v)} · {industryName(v)}</p>
+    <Heading class="hm-card__title">
+      <a class="hm-card__link" href={videoUrl(v)}>{v.data.title}</a>
+    </Heading>
+    <p class="hm-card__client">{clientName(v)}</p>
+    {stat && (
+      <p class="hm-card__stat"><span class="hm-card__stat-num">{stat.number}</span> {stat.label.toLowerCase()}</p>
+    )}
+    <span class="hm-card__more" aria-hidden="true">Watch video →</span>
+  </div>
+</article>

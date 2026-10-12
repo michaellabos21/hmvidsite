@@ -2,28 +2,38 @@
 import Base from '../layouts/Base.astro';
 import Button from '../components/Button.astro';
 import DiscoveryButton from '../components/DiscoveryButton.astro';
-import ProjectCard from '../components/ProjectCard.astro';
+import VideoCard from '../components/VideoCard.astro';
+import VideoPlayer from '../components/VideoPlayer.astro';
 import Stats from '../components/Stats.astro';
 import CtaBand from '../components/CtaBand.astro';
-import { home, links } from '../data/site';
-import { getFeatured, getProjects, projectName, projectUrl } from '../lib/projects';
+import { home, links, videoTypes } from '../data/site';
+import { clientName, getFeatured, getReel, getVideos, videoUrl } from '../lib/videos';
 
-const featured = await getFeatured(6);
-const testimonials = (await getProjects()).filter((p) => p.data.testimonial).slice(0, 3);
+const reel = await getReel();
+const featured = await getFeatured(6, reel);
+const testimonials = (await getVideos()).filter((v) => v.data.testimonial).slice(0, 3);
 ---
 <Base
-  title="Hughes Media Portfolio | Digital Marketing Results"
-  description="See SEO, PPC, web design, and video projects from Hughes Media, an Atlanta digital marketing agency since 2000."
+  title="Hughes Media Video | Video Production in Atlanta"
+  description="Brand films, commercials, testimonials, and short-form video from Hughes Media, an Atlanta digital marketing agency since 2000."
 >
-  <section class="hm-hero hm-band hm-band--dark" aria-labelledby="hm-hero-title">
+  <section class="hm-hero hm-hero--video hm-band hm-band--dark" aria-labelledby="hm-hero-title">
     <div class="hm-container hm-hero__inner">
-      <p class="hm-eyebrow">Hughes Media Portfolio</p>
-      <h1 class="hm-hero__title" id="hm-hero-title">{home.headline}</h1>
-      <p class="hm-hero__sub">SEO, paid media, websites, and video built around one goal: more of the right leads for midsize businesses.</p>
-      <div class="hm-actions">
-        <Button href="/work/" size="lg">See Our Work</Button>
-        <DiscoveryButton variant="ghost-light" size="lg" />
+      <div class="hm-hero__copy">
+        <p class="hm-eyebrow">Hughes Media Video</p>
+        <h1 class="hm-hero__title" id="hm-hero-title">{home.headline}</h1>
+        <p class="hm-hero__sub">Brand films, commercials, testimonials, and short-form content, planned around what each video needs to achieve and where it will run.</p>
+        <div class="hm-actions">
+          <Button href="/videos/" size="lg">Watch Our Work</Button>
+          <DiscoveryButton variant="ghost-light" size="lg" />
+        </div>
       </div>
+      {reel && (
+        <div class="hm-hero__reel">
+          <VideoPlayer video={reel} eager />
+          <p class="hm-hero__reel-caption"><a href={videoUrl(reel)}>{reel.data.title}</a> · {clientName(reel)}</p>
+        </div>
+      )}
     </div>
   </section>
 
@@ -32,26 +42,45 @@ const testimonials = (await getProjects()).filter((p) => p.data.testimonial).sli
       <div class="hm-container">
         <div class="hm-section__head">
           <div>
-            <h2 class="hm-section__title" id="hm-featured-title">Featured Projects</h2>
-            <p class="hm-section__intro">A few recent projects and the results they produced.</p>
+            <h2 class="hm-section__title" id="hm-featured-title">Featured Videos</h2>
+            <p class="hm-section__intro">Recent work and what it was made to do.</p>
           </div>
-          <a class="hm-link-arrow" href="/work/">View all work →</a>
+          <a class="hm-link-arrow" href="/videos/">View all videos →</a>
         </div>
         <div class="hm-grid">
-          {featured.map((p) => <ProjectCard project={p} />)}
+          {featured.map((v) => <VideoCard video={v} />)}
         </div>
       </div>
     </section>
   )}
 
-  <section class="hm-results hm-band hm-band--red" aria-label="Results">
+  <section class="hm-results hm-band hm-band--red" aria-label="About Hughes Media">
     <div class="hm-container">
       <Stats stats={home.stats} variant="strip" />
     </div>
   </section>
 
+  <section class="hm-section hm-section--gray" aria-labelledby="hm-types-title">
+    <div class="hm-container">
+      <div class="hm-section__head">
+        <h2 class="hm-section__title" id="hm-types-title">What We Make</h2>
+        <a class="hm-link-arrow" href="/services/">Video services →</a>
+      </div>
+      <ul class="hm-type-links" role="list">
+        {videoTypes.map((t) => (
+          <li>
+            <a href={`/videos/?type=${t.slug}`}>
+              <span class="hm-type-links__name">{t.name}</span>
+              <span class="hm-type-links__desc">{t.desc}</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
   {home.clientLogos.length > 0 && (
-    <section class="hm-section hm-section--gray" aria-labelledby="hm-logos-title">
+    <section class="hm-section" aria-labelledby="hm-logos-title">
       <div class="hm-container">
         <h2 class="hm-section__title hm-section__title--center" id="hm-logos-title">Trusted by businesses across the Southeast and beyond</h2>
         <ul class="hm-logos" role="list">
@@ -69,12 +98,12 @@ const testimonials = (await getProjects()).filter((p) => p.data.testimonial).sli
           <a class="hm-link-arrow" href={links.reviews}>Read more reviews →</a>
         </div>
         <div class="hm-quotes">
-          {testimonials.map((p) => (
+          {testimonials.map((v) => (
             <figure class="hm-quote">
-              <blockquote><p>{p.data.testimonial!.quote}</p></blockquote>
+              <blockquote><p>{v.data.testimonial!.quote}</p></blockquote>
               <figcaption>
-                {p.data.testimonial!.name && <span class="hm-quote__name">{p.data.testimonial!.name}</span>}
-                <a class="hm-quote__project" href={projectUrl(p)}>{projectName(p)}</a>
+                {v.data.testimonial!.name && <span class="hm-quote__name">{v.data.testimonial!.name}</span>}
+                <a class="hm-quote__project" href={videoUrl(v)}>{v.data.title}</a>
               </figcaption>
             </figure>
           ))}

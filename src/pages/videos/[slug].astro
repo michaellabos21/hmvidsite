@@ -1,0 +1,140 @@
+---
+import { getImage } from 'astro:assets';
+import { render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import Button from '../../components/Button.astro';
+import Stats from '../../components/Stats.astro';
+import VideoCard from '../../components/VideoCard.astro';
+import VideoPlayer from '../../components/VideoPlayer.astro';
+import CtaBand from '../../components/CtaBand.astro';
+import { business, links, videoTypeMainUrl } from '../../data/site';
+import {
+  clientIsPublic,
+  clientName,
+  embedUrl,
+  getRelated,
+  getVideos,
+  industryName,
+  isoDuration,
+  remoteThumb,
+  typeName,
+  videoUrl,
+  type Video,
+} from '../../lib/videos';
+
+export async function getStaticPaths() {
+  const videos = await getVideos();
+  return videos.map((video) => ({ params: { slug: video.id }, props: { video } }));
+}
+
+interface Props {
+  video: Video;
+}
+
+const { video: v } = Astro.props;
+const d = v.data;
+const client = clientName(v);
+const { Content } = await render(v);
+const hasBody = Boolean(v.body?.trim());
+const related = await getRelated(v, 3);
+
+const ogImage = d.thumbnail
+  ? new URL((await getImage({ src: d.thumbnail, width: 1200, height: 630, format: 'jpg', fit: 'cover' })).src, Astro.site).href
+  : (remoteThumb(v) ?? undefined);
+
+const title = `${d.title}: ${client} | Hughes Media Video`;
+const description = d.summary;
+
+// VideoObject: what search engines need to show this video in video results.
+const videoObject = {
+  '@type': 'VideoObject',
+  name: `${d.title}: ${client}`,
+  description: d.summary,
+  thumbnailUrl: ogImage ? [ogImage] : undefined,
+  uploadDate: d.date.toISOString(),
+  duration: isoDuration(d.duration),
+  embedUrl: embedUrl(d.videoUrl, false) ?? undefined,
+  url: new URL(videoUrl(v), Astro.site).href,
+  genre: typeName(v),
+  publisher: { '@id': `${links.mainSite}#organization`, '@type': 'Organization', name: business.name },
+};
+---
+<Base title={title} description={description} image={ogImage} type="article" schema={[videoObject]}>
+  <article class="hm-video-page">
+    <header class="hm-video-hero hm-band hm-band--dark">
+      <div class="hm-container">
+        {d.draft && <p class="hm-draft-note">Draft: not included in the production build.</p>}
+        <p class="hm-eyebrow">{typeName(v)} · {industryName(v)}</p>
+        <h1 class="hm-video-hero__title">{d.title}</h1>
+        <p class="hm-video-hero__client">{client}</p>
+        <div class:list={['hm-video-hero__player', d.vertical && 'is-vertical']}>
+          <VideoPlayer video={v} eager />
+        </div>
+      </div>
+    </header>
+
+    <div class="hm-container hm-video-body">
+      <div class="hm-video-body__main">
+        <p class="hm-video-body__summary">{d.summary}</p>
+        {hasBody && (
+          <section class="hm-project__section" aria-labelledby="hm-about-video">
+            <h2 id="hm-about-video">About This Video</h2>
+            <div class="hm-prose"><Content /></div>
+          </section>
+        )}
+
+        {d.stats.length > 0 && (
+          <section class="hm-project__section" aria-labelledby="hm-results">
+            <h2 id="hm-results">The Results</h2>
+            <Stats stats={d.stats} variant="callouts" />
+            {d.statsFootnote && <p class="hm-footnote">{d.statsFootnote}</p>}
+          </section>
+        )}
+
+        {d.testimonial && (
+          <section class="hm-project__section" aria-labelledby="hm-words">
+            <h2 id="hm-words">In Their Words</h2>
+            <figure class="hm-quote hm-quote--large">
+              <blockquote><p>{d.testimonial.quote}</p></blockquote>
+              {d.testimonial.name && <figcaption><span class="hm-quote__name">{d.testimonial.name}</span></figcaption>}
+            </figure>
+          </section>
+        )}
+      </div>
+
+      <aside class="hm-video-body__aside" aria-label="Video details">
+        <dl class="hm-meta hm-meta--light">
+          <div><dt>Client</dt><dd>{client}</dd></div>
+          <div><dt>Type</dt><dd>{typeName(v)}</dd></div>
+          <div><dt>Industry</dt><dd>{industryName(v)}</dd></div>
+          <div><dt>Length</dt><dd>{d.duration}</dd></div>
+          {d.deliverables.length > 0 && (
+            <div><dt>What we did</dt><dd><ul class="hm-tags" role="list">{d.deliverables.map((x) => <li class="hm-tag">{x}</li>)}</ul></dd></div>
+          )}
+        </dl>
+        {!clientIsPublic(v) && <p class="hm-anon-note">Client name withheld at the client's request.</p>}
+        <p class="hm-video-body__links">
+          {d.caseStudyUrl && <Button href={d.caseStudyUrl} variant="secondary" size="sm">Read the full case study</Button>}
+          <a href={videoTypeMainUrl(d.type)}>Learn about our video production services →</a>
+        </p>
+      </aside>
+    </div>
+
+    {related.length > 0 && (
+      <section class="hm-section hm-section--gray" aria-labelledby="hm-related">
+        <div class="hm-container">
+          <div class="hm-section__head">
+            <h2 class="hm-section__title" id="hm-related">More Videos</h2>
+            <a class="hm-link-arrow" href="/videos/">Back to all videos</a>
+          </div>
+          <div class="hm-grid">{related.map((r) => <VideoCard video={r} />)}</div>
+        </div>
+      </section>
+    )}
+  </article>
+
+  <CtaBand
+    heading="Want a video like this?"
+    body="Let's talk through what your video needs to do and where it will run. No pitch, just a clear next step."
+  />
+</Base>
