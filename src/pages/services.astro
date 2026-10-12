@@ -15,14 +15,26 @@ const steps = [
   title="Video Production Services | Hughes Media Video"
   description="Brand films, commercials, testimonials, short-form, event, and animated video, planned, shot, and edited by one Atlanta team."
 >
-  <PageHeader title="Video Production" sub="One team from first idea to final cut, and into the campaigns that put it to work." />
+  <PageHeader
+    title="Video Production"
+    eyebrow="What We Make"
+    rec
+    sub="One team from first idea to final cut, and into the campaigns that put it to work."
+  />
 
-  <section class="hm-section">
+  <section class="hm-section" aria-labelledby="hm-services-title">
     <div class="hm-container">
+      <div class="hm-section__head">
+        <div>
+          <p class="hm-kicker" aria-hidden="true">01 · Services</p>
+          <h2 class="hm-section__title" id="hm-services-title">What We Produce</h2>
+        </div>
+      </div>
       <ul class="hm-services" role="list">
-        {videoTypes.map((t) => (
+        {videoTypes.map((t, i) => (
           <li class="hm-service">
-            <h2 class="hm-service__title">{t.name}</h2>
+            <span class="hm-service__num" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+            <h3 class="hm-service__title">{t.name}</h3>
             <p class="hm-service__desc">{t.desc}</p>
             <p class="hm-service__links">
               <a class="hm-link-arrow" href={`/videos/?type=${t.slug}`}>Watch examples →</a>
@@ -34,10 +46,15 @@ const steps = [
     </div>
   </section>
 
-  <section class="hm-section hm-section--gray" aria-labelledby="hm-process">
+  <section class="hm-section hm-screening" aria-labelledby="hm-process">
     <div class="hm-container">
-      <h2 class="hm-section__title" id="hm-process">How We Work</h2>
-      <ol class="hm-steps" role="list">
+      <div class="hm-section__head">
+        <div>
+          <p class="hm-kicker" aria-hidden="true">02 · Process</p>
+          <h2 class="hm-section__title" id="hm-process">How We Work</h2>
+        </div>
+      </div>
+      <ol class="hm-steps hm-filmstrip" role="list">
         {steps.map((s) => (
           <li class="hm-step">
             <h3 class="hm-step__title">{s.title}</h3>

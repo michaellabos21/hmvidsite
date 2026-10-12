@@ -9,23 +9,28 @@ import { business, links } from '../data/site';
   title="About | Hughes Media Video"
   description="Atlanta digital marketing agency founded in 2000, with an average client relationship of eight years."
 >
-  <PageHeader title="About Hughes Media" />
+  <PageHeader title="About Hughes Media" eyebrow={`Atlanta · Since ${business.founded}`} rec />
   <section class="hm-section">
     <div class="hm-container hm-about">
       <div class="hm-prose hm-prose--lead">
+        <p class="hm-kicker" aria-hidden="true">01 · Who We Are</p>
         <p>Hughes Media is an Atlanta digital marketing agency founded in 2000. We help midsize businesses connect SEO, paid media, web design, and content around one strategy, so they know what's working and where their budget goes.</p>
         <p>Our video team plans, shoots, and edits in-house, so every video is built to fit the rest of your marketing: the ads it runs in, the pages it lives on, and the leads it needs to bring in.</p>
         <p>Our average client relationship is eight years. We don't require long-term contracts. We earn the next month with results.</p>
         <p><a class="hm-link-arrow" href={links.team}>Meet the team on hughesmedia.us →</a></p>
       </div>
-      <Stats
-        variant="stack"
-        stats={[
-          { number: business.founded, label: 'Year founded' },
-          { number: '8 yrs', label: 'Average client relationship' },
-          { number: 'ATL', label: 'Headquartered in Atlanta' },
-        ]}
-      />
+      <aside class="hm-slate" aria-label="Hughes Media at a glance">
+        <div class="hm-slate__stripes" aria-hidden="true"></div>
+        <p class="hm-slate__label" aria-hidden="true">At a glance</p>
+        <Stats
+          variant="slate"
+          stats={[
+            { number: business.founded, label: 'Year founded' },
+            { number: '8 yrs', label: 'Average client relationship' },
+            { number: 'ATL', label: 'Headquartered in Atlanta' },
+          ]}
+        />
+      </aside>
     </div>
   </section>
   <CtaBand />

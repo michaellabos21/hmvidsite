@@ -11,14 +11,19 @@ import { addressLine, business } from '../../data/site';
 >
   <PageHeader
     title="Schedule a Discovery Call"
+    eyebrow="Let's Talk"
+    rec
     sub="Tell us about the video you need. We'll come to the call with ideas on approach, format, and budget."
   />
   <section class="hm-section">
     <div class="hm-container hm-contact">
       <div class="hm-contact__form" id="discovery-form">
+        <p class="hm-kicker" aria-hidden="true">01 · Your Project</p>
         <DiscoveryForm />
       </div>
-      <aside class="hm-contact__aside">
+      <aside class="hm-contact__aside hm-slate">
+        <div class="hm-slate__stripes" aria-hidden="true"></div>
+        <p class="hm-slate__label" aria-hidden="true">02 · Next Steps</p>
         <h2 class="hm-contact__aside-title">What to expect</h2>
         <ol class="hm-expect" role="list">
           <li>We'll talk through what the video needs to do, who it's for, and where it will run.</li>
