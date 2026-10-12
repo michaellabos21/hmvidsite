@@ -1,0 +1,25 @@
+---
+import DiscoveryButton from './DiscoveryButton.astro';
+import PhoneLink from './PhoneLink.astro';
+
+interface Props {
+  heading?: string;
+  body?: string;
+}
+const {
+  heading = 'Want results like these?',
+  body = "Tell us where your marketing stands today. We'll show you the most useful place to start, and if we're not the right fit, we'll say so.",
+} = Astro.props;
+---
+<section class="hm-cta hm-band hm-band--dark" aria-labelledby="hm-cta-heading">
+  <div class="hm-container hm-cta__inner">
+    <div>
+      <h2 class="hm-cta__heading" id="hm-cta-heading">{heading}</h2>
+      <p class="hm-cta__body">{body}</p>
+    </div>
+    <div class="hm-cta__actions">
+      <DiscoveryButton size="lg" />
+      <p class="hm-cta__phone"><PhoneLink prefix="Or call " /></p>
+    </div>
+  </div>
+</section>

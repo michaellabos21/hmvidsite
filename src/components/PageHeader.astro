@@ -1,0 +1,15 @@
+---
+interface Props {
+  title: string;
+  sub?: string;
+  eyebrow?: string;
+}
+const { title, sub, eyebrow } = Astro.props;
+---
+<header class="hm-page-header hm-band hm-band--dark">
+  <div class="hm-container">
+    {eyebrow && <p class="hm-eyebrow">{eyebrow}</p>}
+    <h1 class="hm-page-header__title">{title}</h1>
+    {sub && <p class="hm-page-header__sub">{sub}</p>}
+  </div>
+</header>

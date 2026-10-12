@@ -1,0 +1,16 @@
+---
+interface Props {
+  stats: { number: string; label: string }[];
+  variant: 'strip' | 'callouts' | 'stack';
+}
+const { stats, variant } = Astro.props;
+---
+{stats.length > 0 && (
+  <ul class:list={['hm-stats', `hm-stats--${variant}`]} role="list">
+    {stats.map((s) => (
+      <li class="hm-stat">
+        <span class="hm-stat__num">{s.number}</span> <span class="hm-stat__label">{s.label}</span>
+      </li>
+    ))}
+  </ul>
+)}

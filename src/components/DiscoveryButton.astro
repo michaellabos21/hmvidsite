@@ -1,0 +1,13 @@
+---
+import Button from './Button.astro';
+import { discoveryUrl } from '../data/site';
+
+interface Props {
+  variant?: 'primary' | 'secondary' | 'ghost-light';
+  size?: 'sm' | 'lg';
+  class?: string;
+}
+const { variant = 'primary', size, class: extra } = Astro.props;
+const external = /^https?:\/\//.test(discoveryUrl);
+---
+<Button href={discoveryUrl} variant={variant} size={size} class={extra} track="hm_discovery_click" newTab={external}>Schedule Discovery Call</Button>

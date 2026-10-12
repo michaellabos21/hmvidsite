@@ -1,0 +1,38 @@
+---
+import { Image } from 'astro:assets';
+import { heroAlt, industryName, projectName, projectUrl, serviceNames, type Project } from '../lib/projects';
+
+interface Props {
+  project: Project;
+  headingLevel?: 2 | 3;
+}
+const { project: p, headingLevel = 3 } = Astro.props;
+const Heading = `h${headingLevel}` as 'h2' | 'h3';
+const stat = p.data.stats[0];
+---
+<article class="hm-card" data-service={p.data.services.join(' ')} data-industry={p.data.industry}>
+  <div class="hm-card__media">
+    <Image
+      src={p.data.heroImage}
+      alt={heroAlt(p)}
+      widths={[360, 720]}
+      sizes="(min-width: 1100px) 360px, (min-width: 700px) 50vw, 100vw"
+      format="webp"
+      loading="lazy"
+    />
+  </div>
+  <div class="hm-card__body">
+    <p class="hm-card__eyebrow">{industryName(p)}</p>
+    <Heading class="hm-card__title">
+      <a class="hm-card__link" href={projectUrl(p)}>{projectName(p)}</a>
+    </Heading>
+    {stat && (
+      <p class="hm-card__stat"><span class="hm-card__stat-num">{stat.number}</span> {stat.label.toLowerCase()}</p>
+    )}
+    <ul class="hm-tags" role="list" aria-label="Services">
+      {serviceNames(p).map((s) => <li class="hm-tag">{s}</li>)}
+    </ul>
+    <span class="hm-card__more" aria-hidden="true">View project →</span>
+    {p.data.draft && <span class="hm-draft-badge">Draft</span>}
+  </div>
+</article>

@@ -1,0 +1,37 @@
+---
+import Base from '../../layouts/Base.astro';
+import PageHeader from '../../components/PageHeader.astro';
+import PhoneLink from '../../components/PhoneLink.astro';
+import DiscoveryForm from '../../components/DiscoveryForm.astro';
+import { addressLine, business } from '../../data/site';
+---
+<Base
+  title="Schedule a Discovery Call | Hughes Media"
+  description="Talk with Hughes Media about your goals and current marketing. Get a clear next step, no pitch."
+>
+  <PageHeader
+    title="Schedule a Discovery Call"
+    sub="Tell us a little about your business. We'll review your current marketing and come to the call with ideas."
+  />
+  <section class="hm-section">
+    <div class="hm-container hm-contact">
+      <div class="hm-contact__form" id="discovery-form">
+        <DiscoveryForm />
+      </div>
+      <aside class="hm-contact__aside">
+        <h2 class="hm-contact__aside-title">What to expect</h2>
+        <ol class="hm-expect" role="list">
+          <li>We'll talk through your goals, lead sources, and what's not working.</li>
+          <li>You'll get a straight answer on where to start.</li>
+          <li>If we're not the right fit, we'll tell you.</li>
+        </ol>
+        <div class="hm-contact__details">
+          <h2 class="hm-contact__aside-title">Talk to us</h2>
+          <p class="hm-contact__phone"><PhoneLink /></p>
+          <address>{addressLine}</address>
+          <p><a href={business.directionsUrl} target="_blank" rel="noopener">Get directions →<span class="screen-reader-text"> (opens in a new tab)</span></a></p>
+        </div>
+      </aside>
+    </div>
+  </section>
+</Base>

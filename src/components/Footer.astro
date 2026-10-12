@@ -1,0 +1,73 @@
+---
+import DiscoveryButton from './DiscoveryButton.astro';
+import PhoneLink from './PhoneLink.astro';
+import { badges, business, industries, kangarooMark, links, services } from '../data/site';
+import { getProjects } from '../lib/projects';
+
+const projects = await getProjects();
+const usedIndustries = industries.filter((i) => projects.some((p) => p.data.industry === i.slug)).slice(0, 5);
+const year = new Date().getFullYear();
+---
+<footer class="hm-footer">
+  <div class="hm-container">
+    <div class="hm-footer__top">
+      <div class="hm-footer__brand">
+        <a class="hm-logo hm-logo--footer" href="/">
+          <img class="hm-logo__img" src="/images/logo-white.webp" width="640" height="117" alt="Hughes Media digital agency" loading="lazy" />
+        </a>
+        <p class="hm-footer__tagline">Connected marketing. Better leads. Clearer results.</p>
+        {kangarooMark && <div class="hm-footer__mark"><img src={kangarooMark} alt="" loading="lazy" /></div>}
+      </div>
+
+      <nav class="hm-footer__col" aria-labelledby="hm-f-work">
+        <h2 class="hm-footer__heading" id="hm-f-work">Work</h2>
+        <ul role="list">
+          <li><a href="/work/">All projects</a></li>
+          {usedIndustries.map((i) => <li><a href={`/work/?industry=${i.slug}`}>{i.name}</a></li>)}
+        </ul>
+      </nav>
+
+      <nav class="hm-footer__col" aria-labelledby="hm-f-services">
+        <h2 class="hm-footer__heading" id="hm-f-services">Services</h2>
+        <ul role="list">
+          {services.slice(0, 6).map((s) => <li><a href={`/work/?service=${s.slug}`}>{s.name}</a></li>)}
+        </ul>
+      </nav>
+
+      <nav class="hm-footer__col" aria-labelledby="hm-f-hm">
+        <h2 class="hm-footer__heading" id="hm-f-hm">Hughes Media</h2>
+        <ul role="list">
+          <li><a href="/about/">About</a></li>
+          <li><a href="/services/">Services</a></li>
+          {links.videoSite && <li><a href={links.videoSite}>Video site</a></li>}
+          <li><a href={links.mainSite}>Visit hughesmedia.us →</a></li>
+        </ul>
+      </nav>
+
+      <div class="hm-footer__col">
+        <h2 class="hm-footer__heading">Get in Touch</h2>
+        <p class="hm-footer__phone"><PhoneLink /></p>
+        <address class="hm-footer__address">
+          {business.street}<br />
+          {business.city}, {business.region} {business.postalCode}
+        </address>
+        <p><a href={business.directionsUrl} target="_blank" rel="noopener">Get directions →<span class="screen-reader-text"> (opens in a new tab)</span></a></p>
+        <DiscoveryButton size="sm" />
+      </div>
+    </div>
+
+    {badges.length > 0 && (
+      <ul class="hm-footer__badges" role="list" aria-label="Partner badges and awards">
+        {badges.map((b) => <li><img src={b.src} alt={b.alt} loading="lazy" /></li>)}
+      </ul>
+    )}
+
+    <div class="hm-footer__legal">
+      <p>© {year} {business.name}. All rights reserved.</p>
+      <ul role="list">
+        <li><a href="/privacy-policy/">Privacy Policy</a></li>
+        <li><a href="/sitemap/">Sitemap</a></li>
+      </ul>
+    </div>
+  </div>
+</footer>

@@ -1,0 +1,18 @@
+---
+interface Props {
+  href: string;
+  variant?: 'primary' | 'secondary' | 'ghost-light';
+  size?: 'sm' | 'lg';
+  newTab?: boolean;
+  track?: string;
+  class?: string;
+}
+const { href, variant = 'primary', size, newTab = false, track, class: extra } = Astro.props;
+---
+<a
+  class:list={['hm-btn', `hm-btn--${variant}`, size && `hm-btn--${size}`, extra]}
+  href={href}
+  data-track={track}
+  target={newTab ? '_blank' : undefined}
+  rel={newTab ? 'noopener' : undefined}
+><slot />{newTab && <span class="screen-reader-text"> (opens in a new tab)</span>}</a>

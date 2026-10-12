@@ -1,0 +1,121 @@
+---
+import '@fontsource/bitter/600.css';
+import '@fontsource/bitter/700.css';
+import '@fontsource/roboto/400.css';
+import '@fontsource/roboto/500.css';
+import '@fontsource/roboto/700.css';
+import '@fontsource/oswald/600.css';
+import '../styles/main.css';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { business, cookieBanner, env, links } from '../data/site';
+
+interface Props {
+  title: string;
+  description?: string;
+  /** Absolute or root-relative image for Open Graph. */
+  image?: string;
+  type?: 'website' | 'article';
+  /** Overrides the self-referencing canonical (e.g. a main-site case study). */
+  canonical?: string;
+  /** Extra JSON-LD nodes for this page. */
+  schema?: Record<string, unknown>[];
+  noindex?: boolean;
+}
+
+const { title, description, image, type = 'website', canonical, schema = [], noindex = false } = Astro.props;
+const site = Astro.site ?? new URL('https://example.com');
+const canonicalUrl = canonical ?? new URL(Astro.url.pathname, site).href;
+const ogImage = image ? new URL(image, site).href : new URL('/images/og-default.png', site).href;
+const gtmId = /^GTM-[A-Z0-9]+$/.test(env.gtmId) ? env.gtmId : '';
+
+const organization = {
+  '@type': 'Organization',
+  '@id': `${links.mainSite}#organization`,
+  name: business.name,
+  url: links.mainSite,
+  logo: new URL('/images/logo.webp', site).href,
+  telephone: `+1-${business.phone.replaceAll('.', '-')}`,
+  foundingDate: business.founded,
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: business.street,
+    addressLocality: business.city,
+    addressRegion: business.region,
+    postalCode: business.postalCode,
+    addressCountry: 'US',
+  },
+  sameAs: Object.values(links.social).filter(Boolean),
+};
+const jsonLd = JSON.stringify({ '@context': 'https://schema.org', '@graph': [organization, ...schema] }).replace(/</g, '\\u003c');
+const mainHost = new URL(links.mainSite).hostname;
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script is:inline>document.documentElement.classList.add('js');</script>
+    <title>{title}</title>
+    {description && <meta name="description" content={description} />}
+    <link rel="canonical" href={canonicalUrl} />
+    {(noindex || env.noindex) && <meta name="robots" content="noindex, nofollow" />}
+    <meta name="theme-color" content="#161C1F" />
+    <link rel="icon" href="/favicon.png" type="image/png" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+
+    <meta property="og:type" content={type} />
+    <meta property="og:site_name" content={business.name} />
+    <meta property="og:title" content={title} />
+    {description && <meta property="og:description" content={description} />}
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:image" content={ogImage} />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <script type="application/ld+json" set:html={jsonLd} />
+
+    <script is:inline define:vars={{ cookieBanner }}>
+      window.dataLayer = window.dataLayer || [];
+      window.gtag = function () { window.dataLayer.push(arguments); };
+      if (cookieBanner) {
+        // Consent Mode v2: analytics off until the visitor accepts.
+        gtag('consent', 'default', { analytics_storage: 'denied', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied', wait_for_update: 500 });
+        try {
+          if (localStorage.getItem('hm_consent') === 'granted') {
+            gtag('consent', 'update', { analytics_storage: 'granted', ad_storage: 'granted', ad_user_data: 'granted', ad_personalization: 'granted' });
+          }
+        } catch (e) {}
+      }
+    </script>
+    {gtmId && (
+      <script is:inline define:vars={{ gtmId }}>
+        (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer',gtmId);
+      </script>
+    )}
+  </head>
+  <body data-main-host={mainHost}>
+    {gtmId && (
+      <noscript><iframe src={`https://www.googletagmanager.com/ns.html?id=${gtmId}`} height="0" width="0" style="display:none;visibility:hidden" title="Google Tag Manager"></iframe></noscript>
+    )}
+    <a class="hm-skip-link" href="#main">Skip to main content</a>
+    <Header />
+    <main id="main" class="hm-main" tabindex="-1">
+      <slot />
+    </main>
+    <Footer />
+
+    {cookieBanner && (
+      <div class="hm-cookie" id="hm-cookie" role="region" aria-label="Cookie notice" hidden>
+        <p>We use cookies to understand how people use this site.</p>
+        <div class="hm-cookie__actions">
+          <button type="button" class="hm-btn hm-btn--primary hm-btn--sm" data-consent="granted">Accept</button>
+          <button type="button" class="hm-btn hm-btn--ghost-light hm-btn--sm" data-consent="denied">Decline</button>
+        </div>
+      </div>
+    )}
+
+    <script>
+      import '../scripts/main.js';
+    </script>
+  </body>
+</html>

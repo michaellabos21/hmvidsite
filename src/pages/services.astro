@@ -1,0 +1,39 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHeader from '../components/PageHeader.astro';
+import CtaBand from '../components/CtaBand.astro';
+import { serviceMainUrl } from '../data/site';
+
+// Each service maps to a Service slug: "See … work" pre-filters the Work page.
+const items = [
+  { slug: 'seo', title: 'SEO & AEO', desc: 'Get found on Google and in AI answers from ChatGPT, Gemini, and Perplexity.', link: 'See SEO work →' },
+  { slug: 'ppc', title: 'PPC & Paid Media', desc: 'Google Ads, Meta, and programmatic campaigns managed for lead quality and cost per lead.', link: 'See PPC work →' },
+  { slug: 'web-design-development', title: 'Website Design', desc: 'Fast, conversion-focused WordPress sites and landing pages.', link: 'See web work →' },
+  { slug: 'video', title: 'Video Production', desc: 'Shoots, short-form content, and campaign video.', link: 'See video work →' },
+  { slug: 'paid-social', title: 'Social Media', desc: 'Organic and paid social that supports your broader goals.', link: 'See social work →' },
+  { slug: 'branding', title: 'Branding & Creative', desc: 'Logos, brand systems, print, and copywriting.', link: 'See creative work →' },
+];
+---
+<Base
+  title="Services | Hughes Media Portfolio"
+  description="SEO, AEO, PPC, websites, video, and social, coordinated by one Atlanta team. See the work."
+>
+  <PageHeader title="What We Do" sub="One coordinated team across search, paid media, web, content, and video." />
+  <section class="hm-section">
+    <div class="hm-container">
+      <ul class="hm-services" role="list">
+        {items.map((s) => (
+          <li class="hm-service">
+            <h2 class="hm-service__title">{s.title}</h2>
+            <p class="hm-service__desc">{s.desc}</p>
+            <p class="hm-service__links">
+              <a class="hm-link-arrow" href={`/work/?service=${s.slug}`}>{s.link}</a>
+              <a class="hm-link-subtle" href={serviceMainUrl(s.slug)}>Service details on hughesmedia.us →</a>
+            </p>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+  <CtaBand />
+</Base>

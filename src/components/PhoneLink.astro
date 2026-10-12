@@ -1,0 +1,10 @@
+---
+import { business } from '../data/site';
+
+interface Props {
+  prefix?: string;
+  class?: string;
+}
+const { prefix = '', class: extra } = Astro.props;
+---
+<a href={business.phoneHref} class={extra} data-track="hm_phone_click">{prefix}{business.phone}</a>

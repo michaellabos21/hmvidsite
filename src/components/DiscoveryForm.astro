@@ -1,0 +1,86 @@
+---
+import { budgetRanges, business, env, formServices } from '../data/site';
+
+/*
+ * Posts multipart form data to PUBLIC_LEAD_ENDPOINT (CRM webhook, Formspree, HubSpot...).
+ * With JavaScript: inline validation, fetch submit, in-place success message.
+ * Without: a normal POST; `_next` tells endpoints that support it to redirect to /contact/thanks/.
+ */
+const endpoint = env.leadEndpoint;
+const thanksUrl = new URL('/contact/thanks/', Astro.site).href;
+const fields: { key: string; label: string; type: 'text' | 'email' | 'tel' | 'url'; placeholder: string; required: boolean; autocomplete: string; errorName: string }[] = [
+  { key: 'name', label: 'Your name', type: 'text', placeholder: 'First and last name', required: true, autocomplete: 'name', errorName: 'name' },
+  { key: 'email', label: 'Work email', type: 'email', placeholder: 'you@company.com', required: true, autocomplete: 'email', errorName: 'work email' },
+  { key: 'phone', label: 'Phone', type: 'tel', placeholder: '(555) 555-5555', required: false, autocomplete: 'tel', errorName: 'phone' },
+  { key: 'company', label: 'Company', type: 'text', placeholder: 'Company name', required: true, autocomplete: 'organization', errorName: 'company' },
+  { key: 'website', label: 'Website', type: 'url', placeholder: 'https://yourcompany.com', required: false, autocomplete: 'url', errorName: 'website' },
+];
+---
+{!endpoint && import.meta.env.DEV && (
+  <p class="hm-form__alert">Dev note: PUBLIC_LEAD_ENDPOINT is not set, so submissions have nowhere to go. See .env.example.</p>
+)}
+
+<div class="hm-form-success" data-form-success hidden tabindex="-1">
+  <h2>Thanks, we got it.</h2>
+  <p>Someone from our team will reach out within one business day to set up a time. Want to talk sooner? Call {business.phone}.</p>
+  <p><a class="hm-link-arrow" href="/work/">Browse more of our work →</a></p>
+</div>
+
+<form class="hm-form" method="post" action={endpoint || '#'} novalidate data-lead-form data-endpoint={endpoint}>
+  <input type="hidden" name="source" value={Astro.url.pathname} />
+  <input type="hidden" name="_next" value={thanksUrl} />
+  <input type="hidden" name="_subject" value="Discovery call request (portfolio site)" />
+  <div class="hm-hp" aria-hidden="true">
+    <label for="hm-hp">Leave this field empty</label>
+    <input type="text" id="hm-hp" name="_gotcha" tabindex="-1" autocomplete="off" />
+  </div>
+
+  <div class="hm-form__alert" role="alert" data-form-alert hidden></div>
+
+  <div class="hm-form__grid">
+    {fields.map((f) => (
+      <div class="hm-field">
+        <label for={`hm-${f.key}`}>
+          {f.label} {f.required ? <span class="hm-field__req" aria-hidden="true">*</span> : <span class="hm-field__opt">(optional)</span>}
+        </label>
+        <input
+          id={`hm-${f.key}`}
+          name={f.key}
+          type={f.type}
+          placeholder={f.placeholder}
+          autocomplete={f.autocomplete}
+          required={f.required}
+          aria-required={f.required ? 'true' : undefined}
+          aria-describedby={`hm-${f.key}-error`}
+          data-label={f.errorName}
+        />
+        <p class="hm-field__error" id={`hm-${f.key}-error`}></p>
+      </div>
+    ))}
+
+    <div class="hm-field">
+      <label for="hm-budget">Monthly marketing budget <span class="hm-field__opt">(optional)</span></label>
+      <select id="hm-budget" name="budget">
+        <option value="">Select a range</option>
+        {budgetRanges.map((b) => <option value={b}>{b}</option>)}
+      </select>
+    </div>
+  </div>
+
+  <fieldset class="hm-field hm-checks">
+    <legend>What do you need help with? <span class="hm-field__opt">(optional)</span></legend>
+    {formServices.map((s, i) => (
+      <label class="hm-check" for={`hm-svc-${i}`}>
+        <input type="checkbox" id={`hm-svc-${i}`} name="services" value={s} />
+        <span>{s}</span>
+      </label>
+    ))}
+  </fieldset>
+
+  <div class="hm-field">
+    <label for="hm-message">Anything else we should know? <span class="hm-field__opt">(optional)</span></label>
+    <textarea id="hm-message" name="message" rows="5" placeholder="Goals, timing, current challenges"></textarea>
+  </div>
+
+  <button type="submit" class="hm-btn hm-btn--primary hm-btn--lg" data-submit data-label="Request My Discovery Call">Request My Discovery Call</button>
+</form>

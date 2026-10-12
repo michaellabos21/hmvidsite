@@ -1,0 +1,32 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHeader from '../components/PageHeader.astro';
+import { getProjects, projectName, projectUrl } from '../lib/projects';
+
+const projects = await getProjects();
+const pages = [
+  { href: '/', label: 'Home' },
+  { href: '/work/', label: 'Our Work' },
+  { href: '/services/', label: 'Services' },
+  { href: '/about/', label: 'About' },
+  { href: '/contact/', label: 'Schedule a Discovery Call' },
+  { href: '/privacy-policy/', label: 'Privacy Policy' },
+];
+---
+<Base title="Sitemap | Hughes Media Portfolio" description="All pages and projects on the Hughes Media portfolio.">
+  <PageHeader title="Sitemap" />
+  <section class="hm-section">
+    <div class="hm-container hm-sitemap">
+      <div>
+        <h2>Pages</h2>
+        <ul>{pages.map((p) => <li><a href={p.href}>{p.label}</a></li>)}</ul>
+      </div>
+      {projects.length > 0 && (
+        <div>
+          <h2>Projects</h2>
+          <ul>{projects.map((p) => <li><a href={projectUrl(p)}>{projectName(p)}: {p.data.outcome}</a></li>)}</ul>
+        </div>
+      )}
+    </div>
+  </section>
+</Base>

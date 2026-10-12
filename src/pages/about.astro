@@ -1,0 +1,31 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHeader from '../components/PageHeader.astro';
+import Stats from '../components/Stats.astro';
+import CtaBand from '../components/CtaBand.astro';
+import { business, links } from '../data/site';
+---
+<Base
+  title="About | Hughes Media Portfolio"
+  description="Atlanta digital marketing agency founded in 2000, with an average client relationship of eight years."
+>
+  <PageHeader title="About Hughes Media" />
+  <section class="hm-section">
+    <div class="hm-container hm-about">
+      <div class="hm-prose hm-prose--lead">
+        <p>Hughes Media is an Atlanta digital marketing agency founded in 2000. We help midsize businesses connect SEO, paid media, web design, and content around one strategy, so they know what's working and where their budget goes.</p>
+        <p>Our average client relationship is eight years. We don't require long-term contracts. We earn the next month with results.</p>
+        <p><a class="hm-link-arrow" href={links.team}>Meet the team on hughesmedia.us →</a></p>
+      </div>
+      <Stats
+        variant="stack"
+        stats={[
+          { number: business.founded, label: 'Year founded' },
+          { number: '8 yrs', label: 'Average client relationship' },
+          { number: 'ATL', label: 'Headquartered in Atlanta' },
+        ]}
+      />
+    </div>
+  </section>
+  <CtaBand />
+</Base>

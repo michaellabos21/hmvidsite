@@ -1,0 +1,16 @@
+---
+import Base from '../../layouts/Base.astro';
+import { business } from '../../data/site';
+---
+<!-- Landing page for no-JavaScript form submissions. Also usable as a GA4 conversion URL. -->
+<Base title="Thanks | Hughes Media" noindex>
+  <section class="hm-section">
+    <div class="hm-container" style="max-width: 760px">
+      <div class="hm-form-success">
+        <h1>Thanks, we got it.</h1>
+        <p>Someone from our team will reach out within one business day to set up a time. Want to talk sooner? Call {business.phone}.</p>
+        <p><a class="hm-link-arrow" href="/work/">Browse more of our work →</a></p>
+      </div>
+    </div>
+  </section>
+</Base>
