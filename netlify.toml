@@ -1,0 +1,31 @@
+# Netlify: connect this repo, and every push to main builds and deploys.
+# Set SITE_URL, PUBLIC_LEAD_ENDPOINT and PUBLIC_GTM_ID under Site configuration → Environment variables.
+
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "22"
+
+# Deploy previews / branch deploys: include drafts and keep them out of search.
+[context.deploy-preview.environment]
+  SHOW_DRAFTS = "1"
+  PUBLIC_NOINDEX = "1"
+
+[context.branch-deploy.environment]
+  SHOW_DRAFTS = "1"
+  PUBLIC_NOINDEX = "1"
+
+# Hashed build assets never change: cache for a year.
+[[headers]]
+  for = "/_astro/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    X-Frame-Options = "SAMEORIGIN"

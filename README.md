@@ -89,6 +89,17 @@ To enable the cookie banner with Consent Mode v2 defaults, set `cookieBanner = t
 - Clean URLs: `/videos/video-name/`.
 - Filters are linkable: `/videos/?type=testimonial`. Use these from hughesmedia.us pages and the portfolio site.
 
-## Hosting
+## Hosting (Netlify)
+
+`netlify.toml` holds the build settings. One-time setup:
+
+1. In Netlify, choose **Add new site → Import an existing project → GitHub**, then pick `michaellabos21/hmvidsite`.
+2. Set the branch to deploy to `main`. The build command and publish folder fill in from `netlify.toml`.
+3. Under **Site configuration → Environment variables**, add `SITE_URL`, `PUBLIC_LEAD_ENDPOINT` and `PUBLIC_GTM_ID`.
+4. Deploy. After that, every push to `main` goes live automatically.
+
+Deploy previews and branch deploys include draft videos and are hidden from search engines.
+
+## Other hosts
 
 The output is plain static files in `dist/`, so it can go on any host: the hughesmedia.us host, Netlify, Cloudflare Pages, and so on. Upload `dist/` or connect the repo with build command `npm run build` and output directory `dist`.
