@@ -6,6 +6,7 @@ import Button from '../../components/Button.astro';
 import Stats from '../../components/Stats.astro';
 import VideoCard from '../../components/VideoCard.astro';
 import VideoPlayer from '../../components/VideoPlayer.astro';
+import Viewfinder from '../../components/Viewfinder.astro';
 import CtaBand from '../../components/CtaBand.astro';
 import { business, links, videoTypeMainUrl } from '../../data/site';
 import {
@@ -38,6 +39,10 @@ const { Content } = await render(v);
 const hasBody = Boolean(v.body?.trim());
 const related = await getRelated(v, 3);
 
+// Numbered kickers for whichever body sections this video has.
+const sectionKeys = [hasBody && 'Story', d.stats.length > 0 && 'Results', d.testimonial && 'Client'].filter(Boolean) as string[];
+const kicker = (name: string) => `${String(sectionKeys.indexOf(name) + 1).padStart(2, '0')} · ${name}`;
+
 const ogImage = d.thumbnail
   ? new URL((await getImage({ src: d.thumbnail, width: 1200, height: 630, format: 'jpg', fit: 'cover' })).src, Astro.site).href
   : (remoteThumb(v) ?? undefined);
@@ -64,11 +69,13 @@ const videoObject = {
     <header class="hm-video-hero hm-band hm-band--dark">
       <div class="hm-container">
         {d.draft && <p class="hm-draft-note">Draft: not included in the production build.</p>}
-        <p class="hm-eyebrow">{typeName(v)} · {industryName(v)}</p>
+        <p class="hm-eyebrow hm-eyebrow--rec"><span class="hm-rec" aria-hidden="true"></span>{typeName(v)} · {industryName(v)}</p>
         <h1 class="hm-video-hero__title">{d.title}</h1>
         <p class="hm-video-hero__client">{client}</p>
         <div class:list={['hm-video-hero__player', d.vertical && 'is-vertical']}>
-          <VideoPlayer video={v} eager />
+          <Viewfinder>
+            <VideoPlayer video={v} eager />
+          </Viewfinder>
         </div>
       </div>
     </header>
@@ -78,6 +85,7 @@ const videoObject = {
         <p class="hm-video-body__summary">{d.summary}</p>
         {hasBody && (
           <section class="hm-project__section" aria-labelledby="hm-about-video">
+            <p class="hm-kicker" aria-hidden="true">{kicker('Story')}</p>
             <h2 id="hm-about-video">About This Video</h2>
             <div class="hm-prose"><Content /></div>
           </section>
@@ -85,6 +93,7 @@ const videoObject = {
 
         {d.stats.length > 0 && (
           <section class="hm-project__section" aria-labelledby="hm-results">
+            <p class="hm-kicker" aria-hidden="true">{kicker('Results')}</p>
             <h2 id="hm-results">The Results</h2>
             <Stats stats={d.stats} variant="callouts" />
             {d.statsFootnote && <p class="hm-footnote">{d.statsFootnote}</p>}
@@ -93,6 +102,7 @@ const videoObject = {
 
         {d.testimonial && (
           <section class="hm-project__section" aria-labelledby="hm-words">
+            <p class="hm-kicker" aria-hidden="true">{kicker('Client')}</p>
             <h2 id="hm-words">In Their Words</h2>
             <figure class="hm-quote hm-quote--large">
               <blockquote><p>{d.testimonial.quote}</p></blockquote>
@@ -102,8 +112,10 @@ const videoObject = {
         )}
       </div>
 
-      <aside class="hm-video-body__aside" aria-label="Video details">
-        <dl class="hm-meta hm-meta--light">
+      <aside class="hm-video-body__aside hm-slate" aria-label="Video details">
+        <div class="hm-slate__stripes" aria-hidden="true"></div>
+        <p class="hm-slate__label" aria-hidden="true">Slate</p>
+        <dl class="hm-meta hm-meta--slate">
           <div><dt>Client</dt><dd>{client}</dd></div>
           <div><dt>Type</dt><dd>{typeName(v)}</dd></div>
           <div><dt>Industry</dt><dd>{industryName(v)}</dd></div>
@@ -121,10 +133,13 @@ const videoObject = {
     </div>
 
     {related.length > 0 && (
-      <section class="hm-section hm-section--gray" aria-labelledby="hm-related">
+      <section class="hm-section hm-screening" aria-labelledby="hm-related">
         <div class="hm-container">
           <div class="hm-section__head">
-            <h2 class="hm-section__title" id="hm-related">More Videos</h2>
+            <div>
+              <p class="hm-kicker" aria-hidden="true">Up next</p>
+              <h2 class="hm-section__title" id="hm-related">More Videos</h2>
+            </div>
             <a class="hm-link-arrow" href="/videos/">Back to all videos</a>
           </div>
           <div class="hm-grid">{related.map((r) => <VideoCard video={r} />)}</div>

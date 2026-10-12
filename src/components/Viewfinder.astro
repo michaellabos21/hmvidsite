@@ -1,0 +1,15 @@
+---
+/* Camera viewfinder frame: corner brackets + REC timecode HUD (hidden once playing). */
+interface Props {
+  class?: string;
+}
+const { class: extra } = Astro.props;
+---
+<div class:list={['hm-viewfinder', extra]}>
+  <span class="hm-viewfinder__corner hm-viewfinder__corner--tl" aria-hidden="true"></span>
+  <span class="hm-viewfinder__corner hm-viewfinder__corner--tr" aria-hidden="true"></span>
+  <span class="hm-viewfinder__corner hm-viewfinder__corner--bl" aria-hidden="true"></span>
+  <span class="hm-viewfinder__corner hm-viewfinder__corner--br" aria-hidden="true"></span>
+  <p class="hm-viewfinder__hud" aria-hidden="true"><span class="hm-rec"></span>REC <span data-timecode>00:00:00:00</span></p>
+  <slot />
+</div>

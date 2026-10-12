@@ -18,13 +18,18 @@ const total = videos.length;
   title="Videos | Hughes Media Video"
   description="Watch brand films, commercials, testimonials, and short-form video from Hughes Media. Browse by video type or industry."
 >
-  <PageHeader title="Our Videos" sub="Browse by type or industry. Each video shows what it was made to do and what we handled." />
+  <PageHeader
+    title="Our Videos"
+    eyebrow="The Library"
+    rec
+    sub="Browse by type or industry. Each video shows what it was made to do and what we handled."
+  />
 
   <!--
     Every video is rendered; filtering and "Show more" run in the browser.
     ?type=slug&industry=slug pre-filters (links from the main site and Services page).
   -->
-  <section class="hm-section hm-work" data-work>
+  <section class="hm-section hm-work hm-screening hm-library" data-work>
     <div class="hm-container">
       {groups.length > 0 && (
         <div class="hm-filters" role="region" aria-label="Filter videos">

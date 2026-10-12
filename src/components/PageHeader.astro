@@ -3,12 +3,16 @@ interface Props {
   title: string;
   sub?: string;
   eyebrow?: string;
+  /** Show the red recording dot before the eyebrow. */
+  rec?: boolean;
 }
-const { title, sub, eyebrow } = Astro.props;
+const { title, sub, eyebrow, rec = false } = Astro.props;
 ---
 <header class="hm-page-header hm-band hm-band--dark">
   <div class="hm-container">
-    {eyebrow && <p class="hm-eyebrow">{eyebrow}</p>}
+    {eyebrow && (
+      <p class:list={['hm-eyebrow', rec && 'hm-eyebrow--rec']}>{rec && <span class="hm-rec" aria-hidden="true"></span>}{eyebrow}</p>
+    )}
     <h1 class="hm-page-header__title">{title}</h1>
     {sub && <p class="hm-page-header__sub">{sub}</p>}
   </div>

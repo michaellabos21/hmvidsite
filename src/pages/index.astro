@@ -4,6 +4,7 @@ import Button from '../components/Button.astro';
 import DiscoveryButton from '../components/DiscoveryButton.astro';
 import VideoCard from '../components/VideoCard.astro';
 import VideoPlayer from '../components/VideoPlayer.astro';
+import Viewfinder from '../components/Viewfinder.astro';
 import Stats from '../components/Stats.astro';
 import CtaBand from '../components/CtaBand.astro';
 import { home, links, videoTypes } from '../data/site';
@@ -35,14 +36,9 @@ const headPunct = headMatch?.[2] ?? '';
       </div>
       {reel && (
         <div class="hm-hero__reel">
-          <div class="hm-viewfinder">
-            <span class="hm-viewfinder__corner hm-viewfinder__corner--tl" aria-hidden="true"></span>
-            <span class="hm-viewfinder__corner hm-viewfinder__corner--tr" aria-hidden="true"></span>
-            <span class="hm-viewfinder__corner hm-viewfinder__corner--bl" aria-hidden="true"></span>
-            <span class="hm-viewfinder__corner hm-viewfinder__corner--br" aria-hidden="true"></span>
-            <p class="hm-viewfinder__hud" aria-hidden="true"><span class="hm-rec"></span>REC <span data-timecode>00:00:00:00</span></p>
+          <Viewfinder>
             <VideoPlayer video={reel} eager />
-          </div>
+          </Viewfinder>
           <p class="hm-hero__reel-caption"><span class="hm-hero__reel-label">Now showing</span> <a href={videoUrl(reel)}>{reel.data.title}</a> · {clientName(reel)}</p>
         </div>
       )}
