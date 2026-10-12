@@ -8,6 +8,13 @@
 [build.environment]
   NODE_VERSION = "22"
 
+# Production: TEMPORARY while the site has only placeholder content.
+# Shows draft videos and keeps the site out of search engines.
+# Remove this block at launch (once real videos are published).
+[context.production.environment]
+  SHOW_DRAFTS = "1"
+  PUBLIC_NOINDEX = "1"
+
 # Deploy previews / branch deploys: include drafts and keep them out of search.
 [context.deploy-preview.environment]
   SHOW_DRAFTS = "1"

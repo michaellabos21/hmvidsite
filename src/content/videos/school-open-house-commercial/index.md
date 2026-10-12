@@ -4,8 +4,9 @@
 draft: true
 title: Open House Commercial
 client: Cumberland Academy
-showClient: true
+showClient: false
 approvalOnFile: false
+anonLabel: Atlanta-area private school
 summary: "[Fill in] A :30 spot driving families to the spring open house, cut for YouTube, streaming, and paid social."
 videoUrl: https://www.youtube.com/watch?v=XXXXXXXXXXX
 thumbnail: ./thumbnail.jpg
