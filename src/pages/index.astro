@@ -12,6 +12,11 @@ import { clientName, getFeatured, getReel, getVideos, videoUrl } from '../lib/vi
 const reel = await getReel();
 const featured = await getFeatured(6, reel);
 const testimonials = (await getVideos()).filter((v) => v.data.testimonial).slice(0, 3);
+
+// Brand touch: the headline's closing punctuation renders in red.
+const headMatch = home.headline.match(/^(.*?)([.!?]?)$/);
+const headText = headMatch?.[1] ?? home.headline;
+const headPunct = headMatch?.[2] ?? '';
 ---
 <Base
   title="Hughes Media Video | Video Production in Atlanta"
@@ -20,8 +25,8 @@ const testimonials = (await getVideos()).filter((v) => v.data.testimonial).slice
   <section class="hm-hero hm-hero--video hm-band hm-band--dark" aria-labelledby="hm-hero-title">
     <div class="hm-container hm-hero__inner">
       <div class="hm-hero__copy">
-        <p class="hm-eyebrow">Hughes Media Video</p>
-        <h1 class="hm-hero__title" id="hm-hero-title">{home.headline}</h1>
+        <p class="hm-eyebrow hm-eyebrow--rec"><span class="hm-rec" aria-hidden="true"></span>Hughes Media Video</p>
+        <h1 class="hm-hero__title" id="hm-hero-title">{headText}<span class="hm-accent">{headPunct}</span></h1>
         <p class="hm-hero__sub">Brand films, commercials, testimonials, and short-form content, planned around what each video needs to achieve and where it will run.</p>
         <div class="hm-actions">
           <Button href="/videos/" size="lg">Watch Our Work</Button>
@@ -30,18 +35,26 @@ const testimonials = (await getVideos()).filter((v) => v.data.testimonial).slice
       </div>
       {reel && (
         <div class="hm-hero__reel">
-          <VideoPlayer video={reel} eager />
-          <p class="hm-hero__reel-caption"><a href={videoUrl(reel)}>{reel.data.title}</a> · {clientName(reel)}</p>
+          <div class="hm-viewfinder">
+            <span class="hm-viewfinder__corner hm-viewfinder__corner--tl" aria-hidden="true"></span>
+            <span class="hm-viewfinder__corner hm-viewfinder__corner--tr" aria-hidden="true"></span>
+            <span class="hm-viewfinder__corner hm-viewfinder__corner--bl" aria-hidden="true"></span>
+            <span class="hm-viewfinder__corner hm-viewfinder__corner--br" aria-hidden="true"></span>
+            <p class="hm-viewfinder__hud" aria-hidden="true"><span class="hm-rec"></span>REC <span data-timecode>00:00:00:00</span></p>
+            <VideoPlayer video={reel} eager />
+          </div>
+          <p class="hm-hero__reel-caption"><span class="hm-hero__reel-label">Now showing</span> <a href={videoUrl(reel)}>{reel.data.title}</a> · {clientName(reel)}</p>
         </div>
       )}
     </div>
   </section>
 
   {featured.length > 0 && (
-    <section class="hm-section" aria-labelledby="hm-featured-title">
+    <section class="hm-section hm-screening" aria-labelledby="hm-featured-title">
       <div class="hm-container">
         <div class="hm-section__head">
           <div>
+            <p class="hm-kicker" aria-hidden="true">01 · Featured</p>
             <h2 class="hm-section__title" id="hm-featured-title">Featured Videos</h2>
             <p class="hm-section__intro">Recent work and what it was made to do.</p>
           </div>
@@ -54,6 +67,16 @@ const testimonials = (await getVideos()).filter((v) => v.data.testimonial).slice
     </section>
   )}
 
+  <div class="hm-ticker" aria-hidden="true">
+    <div class="hm-ticker__track">
+      {[0, 1].map(() => (
+        <ul class="hm-ticker__list" role="list">
+          {videoTypes.map((t) => <li>{t.name}</li>)}
+        </ul>
+      ))}
+    </div>
+  </div>
+
   <section class="hm-results hm-band hm-band--red" aria-label="About Hughes Media">
     <div class="hm-container">
       <Stats stats={home.stats} variant="strip" />
@@ -63,15 +86,20 @@ const testimonials = (await getVideos()).filter((v) => v.data.testimonial).slice
   <section class="hm-section hm-section--gray" aria-labelledby="hm-types-title">
     <div class="hm-container">
       <div class="hm-section__head">
-        <h2 class="hm-section__title" id="hm-types-title">What We Make</h2>
+        <div>
+          <p class="hm-kicker" aria-hidden="true">02 · Capabilities</p>
+          <h2 class="hm-section__title" id="hm-types-title">What We Make</h2>
+        </div>
         <a class="hm-link-arrow" href="/services/">Video services →</a>
       </div>
       <ul class="hm-type-links" role="list">
-        {videoTypes.map((t) => (
+        {videoTypes.map((t, i) => (
           <li>
             <a href={`/videos/?type=${t.slug}`}>
+              <span class="hm-type-links__num" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
               <span class="hm-type-links__name">{t.name}</span>
               <span class="hm-type-links__desc">{t.desc}</span>
+              <span class="hm-type-links__go" aria-hidden="true">Watch examples →</span>
             </a>
           </li>
         ))}
@@ -94,7 +122,10 @@ const testimonials = (await getVideos()).filter((v) => v.data.testimonial).slice
     <section class="hm-section" aria-labelledby="hm-testimonials-title">
       <div class="hm-container">
         <div class="hm-section__head">
-          <h2 class="hm-section__title" id="hm-testimonials-title">What Clients Say</h2>
+          <div>
+            <p class="hm-kicker" aria-hidden="true">03 · Clients</p>
+            <h2 class="hm-section__title" id="hm-testimonials-title">What Clients Say</h2>
+          </div>
           <a class="hm-link-arrow" href={links.reviews}>Read more reviews →</a>
         </div>
         <div class="hm-quotes">

@@ -157,6 +157,24 @@
 		render( false );
 	} )();
 
+	/* ---------- Viewfinder timecode (decorative) ---------- */
+	( function () {
+		var el = document.querySelector( '[data-timecode]' );
+		if ( ! el || window.matchMedia( '(prefers-reduced-motion: reduce)' ).matches ) { return; }
+		var start = performance.now();
+		var pad = function ( n ) { return n < 10 ? '0' + n : String( n ); };
+		var visible = true;
+		if ( 'IntersectionObserver' in window ) {
+			new IntersectionObserver( function ( entries ) { visible = entries[ 0 ].isIntersecting; } ).observe( el );
+		}
+		setInterval( function () {
+			if ( ! visible || document.hidden ) { return; }
+			var f = Math.floor( ( performance.now() - start ) / ( 1000 / 24 ) );
+			var s = Math.floor( f / 24 );
+			el.textContent = pad( Math.floor( s / 3600 ) ) + ':' + pad( Math.floor( s / 60 ) % 60 ) + ':' + pad( s % 60 ) + ':' + pad( f % 24 );
+		}, 1000 / 24 );
+	} )();
+
 	/* ---------- Click-to-play video ---------- */
 	document.querySelectorAll( '[data-player]' ).forEach( function ( player ) {
 		var src = player.getAttribute( 'data-src' );
